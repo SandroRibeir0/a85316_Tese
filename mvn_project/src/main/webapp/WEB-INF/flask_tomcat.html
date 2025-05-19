@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Kafka Blocks</title>
+        
+
+        <!---------- CSS ---------->
+        
+        <style>
+            body{
+                margin: 0;
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            }
+            .w_50{
+                position: relative;
+                float: left;
+                width: 50%;
+                height: 100vh;
+                padding: 0;
+            }
+            .dropContainer{
+                position: relative;
+                float: left;
+                width: 300px;
+                margin: 20px;
+                cursor: pointer;
+                overflow: hidden;
+            }
+
+            .blockBtn{
+                float: left;
+                width: inherit;
+                margin-bottom: 2px;
+                padding: 5px 10px;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            .normalBlock{background-color: #006400; color: white;}
+            .normalBlock:hover{background-color: #0092DD;}
+            .activeBlock{background-color: yellowgreen ; color: black;}
+            .activeBlock:hover{background-color: lightskyblue;}
+
+            .houseBtn{
+                float: left;
+                width: inherit;
+                margin-bottom: 2px;
+                padding: 5px 10px 5px 25px;
+                font-size: 14px;
+            }
+            .houseBtn:hover{background-color: #DCECEC}
+            .normalHouse{background-color: #C9C9C9}
+            .activeHouse{background-color: #F9E68C}
+            .hiddenHouse{display: none;}
+
+            .sensorContainer{
+                position: relative;
+                float: left;
+                min-width: 95%;
+                min-height: 97%;
+                padding: 1% 2%;
+                border: solid 1px;
+            }
+            .sensorContainer p{margin: 5px 0;}
+            .sensorContainer .title{
+                font-size: 18px;
+                font-weight: bold;
+                margin: 10px 0 5px 0;
+            }
+        </style>
+    </head>
+
+    <!--------------------------------------------------------------------->
+    
+    <body>
+        <div class="w_50">
+            <div id="blocksDropdown" class="dropContainer">
+            </div>
+        </div>
+        <div class="w_50">
+            <div id="sensorList" class="sensorContainer">
+            </div>
+        </div>
+
+        <script>
+            /******** External Variables ********/
+
+            let cityData = null;
+            
+            /******** Internal Variables ********/
+
+            /******** Dictionary of all the dropdown items ********/
+            let dropdownList = {};
+
+            
+            let currBlock = "";
+            let currHouse = "";
+
+            let intervalId = null;
+            let sensorList = null;
+            
+
+            function initializeApp() {
+                fetchCityData()
+                    .then(() => {
+                        PrepareDropdown();
+                    })
+                    .catch(error => {
+                        console.error('Erro ao inicializar o app:', error);
+                    });
+            }
+
+            window.addEventListener("load", initializeApp);
+
+            
+            /******** COMMUNICATION FUNCTIONS ********/
+            
+
+            /******** Function to fetch the city structure from Flask ********/
+            async function fetchCityData() {
+                try {
+                    let response = await fetch('/getCityData');
+                    cityData = await response.json();                
+                } catch (error) {
+                    console.error('Erro ao buscar dados da cidade:', error);
+                }
+            }
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////////
+            //  INTERFACE FUNCTIONS
+            //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            // Prepares the dropdown list and interface
+            function PrepareDropdown(){
+
+                // Loops through the city´s data
+                for(let i = 0; i < cityData.blocks.length; i++){
+
+                    // Creates the block's div button
+                    let newBlock = document.createElement("div");
+
+                    // Adds the block's ID
+                    newBlock.id = cityData.blocks[i].block;
+
+                    // Adds the block's CSS classes
+                    newBlock.classList.add("blockBtn");
+                    newBlock.classList.add("normalBlock");
+
+                    // Adds the block's text label
+                    newBlock.innerHTML = cityData.blocks[i].block;
+
+                    // Adds the button behavior
+                    newBlock.addEventListener("click", ToggleBlock); 
+
+                    // Adds the block to the dropdown container
+                    document.getElementById("blocksDropdown").appendChild(newBlock);
+
+                    // Prepares the block's list of houses
+                    dropdownList[cityData.blocks[i].block] = [];
+
+                    // Loops through the block's list of buildings
+                    for(let j = 0; j < cityData.blocks[i].buildings.length; j++){
+
+                        // Creates the building's div button
+                        let newHouse = document.createElement("div");
+                        
+                        // Adds the building's ID
+                        newHouse.id = cityData.blocks[i].buildings[j].building_name;
+
+                        // Stores in the tag's data the building's location in the cityData list
+                        newHouse.data = i + "_" + j;
+
+                        // Adds the house's CSS classes
+                        newHouse.classList.add("houseBtn");
+                        newHouse.classList.add("normalHouse");
+                        newHouse.classList.add("hiddenHouse");
+
+                        // Adds the block's text label
+                        newHouse.innerHTML = cityData.blocks[i].buildings[j].building_name;    // + " (" + cityData[i].buildings[j].type + ")";
+
+                        // Adds the button behavior
+                        newHouse.addEventListener("click", ToggleHouse); 
+
+                        // Adds the house to the dropdown container
+                        document.getElementById("blocksDropdown").appendChild(newHouse);
+                        
+                        // Adds the house's ID to the respective block list
+                        dropdownList[cityData.blocks[i].block].push(cityData.blocks[i].buildings[j].building_name);
+                    }
+                    
+                    
+                }
+            }
+
+            ///////////////////////////////////////////////////
+
+            // Toggles the block's activity status and visibility of its respective houses
+            function ToggleBlock(){
+
+                // Toggle's the block's CSS active status
+                this.classList.toggle("normalBlock");
+                this.classList.toggle("activeBlock");
+
+                // Checks if a block had already been selected
+                if(currBlock !== ""){
+
+                    // Avoids calling the toggle twice
+                    if(currBlock !== this.id){
+
+                        // Toggles the block's CSS active status
+                        document.getElementById(currBlock).classList.toggle("normalBlock");
+                        document.getElementById(currBlock).classList.toggle("activeBlock");
+                    }
+
+                    // Loops through that block's houses
+                    for(let i = 0; i < dropdownList[currBlock].length; i++){
+
+                        // Toggles the house's visibility
+                        document.getElementById(dropdownList[currBlock][i]).classList.toggle("hiddenHouse");
+                    }
+                }
+                
+                // Checks if the block was already selected
+                if(currBlock === this.id){
+
+                    // Clears the selection
+                    currBlock = ""; 
+                }
+                else{
+                    // Updates the selection
+                    currBlock = this.id;
+
+                    // Loops through that block's houses
+                    for(let i = 0; i < dropdownList[currBlock].length; i++){
+
+                        // Toggles the house's visibility
+                        document.getElementById(dropdownList[currBlock][i]).classList.toggle("hiddenHouse");
+                    }
+                }
+            }
+
+            ///////////////////////////////////////////////////
+
+            // Toggles the house's activity status and shows the respective sensor info
+            function ToggleHouse(){
+
+                // Toggle's the house's CSS active status
+                this.classList.toggle("normalHouse");
+                this.classList.toggle("activeHouse");
+
+                // Checks if a house had already been selected
+                if(currHouse !== "" && currHouse !== this.id){
+
+                    // Toggles the block's CSS active status
+                    document.getElementById(currHouse).classList.toggle("normalHouse");
+                    document.getElementById(currHouse).classList.toggle("activeHouse"); 
+                }
+
+                // Prints the house's sensor info
+                PrintSensors(Number(this.data.split("_")[0]), Number(this.data.split("_")[1]));
+
+                // Checks if the house was already selected
+                if(currHouse === this.id){
+
+                    // Clears the selection
+                    currHouse = ""; 
+                }
+                else{
+                    // Updates the selection
+                    currHouse = this.id;
+                }
+            }
+
+            ///////////////////////////////////////////////////
+
+            // Prints the respective sensor info
+            function PrintSensors(blockID, houseID){
+                //console.log(cityData[blockID].buildings[houseID].sensors)
+
+                if (intervalId !== null) {
+                    clearInterval(intervalId);
+                    //console.log("Intervalo anterior limpo.");
+                }
+                
+                if (sensorList) {
+                    sensorList.innerHTML = '';  // Opcional: limpar lista se necessário
+                    //console.log(`Novo sensorList atualizado com id ${newSensorListId}`);
+                }
+
+                // Clears the sensor container
+                document.getElementById("sensorList").innerHTML = "";
+
+                // Loops through the floors list
+                for(let i = 0; i < cityData.blocks[blockID].buildings[houseID].floors.length; i++){
+                    // Check for spaces
+                    if (cityData.blocks[blockID].buildings[houseID].floors[i].hasOwnProperty("spaces") && 
+                        cityData.blocks[blockID].buildings[houseID].floors[i]["spaces"] != null){
+                        
+                        for(let j = 0; j < cityData.blocks[blockID].buildings[houseID].floors[i].spaces.length; j++){
+                        
+                            for(let z = 0; z < cityData.blocks[blockID].buildings[houseID].floors[i].spaces[j].divisions.length; z++){
+                            
+                                // Check for sensors
+                                if (cityData.blocks[blockID].buildings[houseID].floors[i].spaces[j].divisions[z].hasOwnProperty("sensors") && 
+                                    cityData.blocks[blockID].buildings[houseID].floors[i].spaces[j].divisions[z]["sensors"] != null){
+                                    
+                                    for(let k = 0; k < cityData.blocks[blockID].buildings[houseID].floors[i].spaces[j].divisions[z].sensors.length; k++){
+                                        // Creates the sensor's text elements
+                                        let newSensorTitle = document.createElement("p"); 
+                                        let newSensorData = document.createElement("p");
+
+                                        // Adds the sensor's ID
+                                        newSensorData.id = cityData.blocks[blockID].buildings[houseID].floors[i].spaces[j].divisions[z].sensors[k].sensor_id;
+
+                                        // Adds the sensor's CSS class
+                                        newSensorTitle.classList.add("title");
+                                        
+                                        // Writes the sensor's title and data
+                                        //newSensorTitle.innerHTML = cityData.blocks[blockID].buildings[houseID].floors[i].spaces[j].divisions[z].sensors[k].sensor_id;
+                                        newSensorTitle.innerHTML = `<strong>Sensor ID: </strong>${cityData.blocks[blockID].buildings[houseID].floors[i].spaces[j].divisions[z].sensors[k].sensor_id}`;
+                                        //newSensorData.innerHTML = cityData.blocks[blockID].buildings[houseID].floors[i].spaces[j].divisions[z].sensors[k]["data"] = 0;
+                                        newSensorData.innerHTML = `Status: ${(cityData.blocks[blockID].buildings[houseID].floors[i].spaces[j].divisions[z].sensors[k]["data"] = 0)}`;
+
+                                        // Adds the sensor text to the container
+                                        document.getElementById("sensorList").appendChild(newSensorTitle);
+                                        document.getElementById("sensorList").appendChild(newSensorData);
+                                    }
+
+                                }
+                                
+                            }
+                        }
+                    }else{
+                        for(let z = 0; z < cityData.blocks[blockID].buildings[houseID].floors[i].divisions.length; z++){
+                            
+                            // Check for sensors
+                            if (cityData.blocks[blockID].buildings[houseID].floors[i].divisions[z].hasOwnProperty("sensors") && 
+                                cityData.blocks[blockID].buildings[houseID].floors[i].divisions[z]["sensors"] != null){
+                                
+                                for(let k = 0; k < cityData.blocks[blockID].buildings[houseID].floors[i].divisions[z].sensors.length; k++){
+                                    // Creates the sensor's text elements
+                                    let newSensorTitle = document.createElement("p"); 
+                                    let newSensorData = document.createElement("p");
+
+                                    // Adds the sensor's ID
+                                    newSensorData.id = cityData.blocks[blockID].buildings[houseID].floors[i].divisions[z].sensors[k].sensor_id;
+                                    //newSensorData.data = (cityData.blocks[blockID].buildings[houseID].floors[i].divisions[z].sensors[k]["data"] = 0);
+
+                                    // Adds the sensor's CSS class
+                                    newSensorTitle.classList.add("title");
+                                    
+                                    // Writes the sensor's title and data
+                                    //newSensorTitle.innerHTML = cityData.blocks[blockID].buildings[houseID].floors[i].divisions[z].sensors[k].sensor_id;
+                                    newSensorTitle.innerHTML =  `<strong>Sensor ID: </strong>${cityData.blocks[blockID].buildings[houseID].floors[i].divisions[z].sensors[k].sensor_id}`;
+                                    //newSensorData.innerHTML = cityData.blocks[blockID].buildings[houseID].floors[i].divisions[z].sensors[k]["data"] = 0;
+                                    newSensorData.innerHTML = `Status: ${(cityData.blocks[blockID].buildings[houseID].floors[i].divisions[z].sensors[k]["data"] = 0)}`;
+
+                                    // Adds the sensor text to the container
+                                    document.getElementById("sensorList").appendChild(newSensorTitle);
+                                    document.getElementById("sensorList").appendChild(newSensorData);
+                                }
+                            }                        
+                        }
+                    }
+                }
+                            
+                //console.log(document.getElementById("sensorList").innerHTML);
+                
+                sensorList = document.getElementById("sensorList");
+                console.log("🚀 ~ PrintSensors ~ sensorList:", sensorList)
+                
+                // Obtendo todos os elementos por ID
+                let elementsWithId = sensorList.querySelectorAll("p[id]");
+
+                updateSensorStatus();
+
+                function updateSensorStatus() {
+                    console.log("Executando o código...");
+                    elementsWithId.forEach((element) => {
+                        console.log("ID:", element.id);
+                        console.log("Valor:", element.innerHTML);
+
+                        fetch(`/status/${(element.id).toString()}`, {
+                            method: 'POST',
+                        })
+                        .then(response => response.json())  // Resolve a Promise do JSON
+                        .then(data => {  // Manipula o JSON resolvido
+                            console.log("🚀 ~ updateSensorStatus ~ data:", data);
+                            //element.innerHTML = data["status"]; 
+                            element.innerHTML = `Status: ${data["status"]}`;
+                        })
+                        .catch(error => {
+                            console.error('Erro ao obter o status do sensor:', error);
+                        });
+                    });                
+                }
+
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    //console.log("Intervalo anterior limpo.");
+                }
+                // Iniciando o ciclo
+                intervalId = setInterval(updateSensorStatus, 5000);
+                
+            }   
+                
+        </script>
+    </body>
+</html>

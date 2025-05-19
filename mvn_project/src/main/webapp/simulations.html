@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Simulations</title>
+    <style>
+        /* Estilo geral da página */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #495057;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 24px;
+            color: #343a40;
+        }
+
+        /* Estilo do contêiner da tabela */
+        #simulationTable {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilo das células da tabela */
+        #simulationTable th, #simulationTable td {
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Estilo do cabeçalho da tabela */
+        #simulationTable th {
+            background-color: #2a9d8f;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Estilo das linhas */
+        #simulationTable tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        #simulationTable tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Estilo dos links */
+        a {
+            color: #2a9d8f;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Available Simulations</h1>
+    <table id="simulationTable">
+        <thead>
+            <tr>
+                <th>Simulation ID</th>
+                <th>Simulation Status</th>
+                <th>Access Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- As linhas de simulação serão adicionadas aqui pelo JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchSimulations() {
+            try {
+                const response = await fetch("/mvn_tomcat_webapp/app?action=getSimulationList");
+                const simulations = await response.json();
+                console.log("🚀 ~ fetchSimulations ~ simulations:", simulations);
+
+                const simulationTableBody = document.getElementById("simulationTable").querySelector("tbody");
+                
+                // Limpa o conteúdo da tabela antes de adicionar novas linhas (caso de atualizações)
+                simulationTableBody.innerHTML = "";
+
+                for (let simulation of simulations){
+                
+                    const row = document.createElement("tr");
+
+                    // Coluna do nome da simulação
+                    const nameCell = document.createElement("td");
+                    nameCell.textContent = simulation.name;
+
+                    // Coluna do estado da simulação
+                    const statusCell = document.createElement("td");
+                    try {
+                        let status = await requestSimulationStatus(simulation.name);
+                        //console.log("🚀 ~ checkSimulationStatus ~ status request response:", status);
+
+                        const icon = document.createElement("img");
+                        // If the simulation is active
+                        if (status.simulationActive == true){    
+                            icon.src = "assets/icons/check.png";  // Caminho para o ícone verde
+                            icon.alt = "Active";  // Texto alternativo para o ícone
+                            icon.width = 20;      // Define o tamanho do ícone
+                            icon.height = 20;
+                            statusCell.appendChild(icon);          
+                        } else{
+                            icon.src = "assets/icons/delete.png";  // Caminho para o ícone vermelho
+                            icon.alt = "Inactive";  // Texto alternativo para o ícone
+                            icon.width = 20;        // Define o tamanho do ícone
+                            icon.height = 20;
+                            statusCell.appendChild(icon);
+                        }
+                    } catch (error) {
+                        console.error('Erro ao sincronizar simulação', error);
+                    }
+
+                    // Coluna do link para a simulação
+                    const linkCell = document.createElement("td");
+                    const link = document.createElement("a");
+                    link.href = simulation.url;
+                    link.textContent = "Access Simulation";
+                    linkCell.appendChild(link);
+
+                    row.appendChild(nameCell);
+                    row.append(statusCell);
+                    row.appendChild(linkCell);
+                    simulationTableBody.appendChild(row);
+                }
+            } catch (error) {
+                console.error("Error obtaining the simulation list:", error);
+            }
+        }
+
+        async function requestSimulationStatus(simulationName){
+            try {
+                let response = await fetch('/mvn_tomcat_webapp/app', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=getSimStatus&simID=${encodeURIComponent(simulationName)}`
+                });
+
+                let status = await response.json(); 
+
+                return status;
+
+            } catch (error) {
+                console.error('Erro ao obter o estado da simulação:', error);
+            }                
+        }
+        // Chama a função ao carregar a página
+        fetchSimulations();
+    </script>
+</body>
+</html>
