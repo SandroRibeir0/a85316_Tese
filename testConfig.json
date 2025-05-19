@@ -1,0 +1,1181 @@
+{
+    "sim_config": [
+        {
+            "sim_duration": 15,
+            "host": "localhost:9092"
+        }
+    ],
+    "blocks": [
+        {
+            "block": "bairro1",
+            "configuration": [
+                {
+                    "host": "localhost:9092"
+                }
+            ],
+            "buildings": [
+                {
+                    "building_type": "casa",
+                    "building_name": "casa1",
+                    "floors": [
+                        {
+                            "floor_number": 0,
+                            "divisions": [
+                                {
+                                    "division_name": "sala",
+                                    "sensors": [
+                                        {
+                                            "sensor_id": 101,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "temp1"
+                                                },
+                                                {
+                                                    "topic": "tempGlobal"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_a",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura exterior",
+                                                    "temp_min": 15.5,
+                                                    "temp_max": 26.0,
+                                                    "temp_peak_hour": 15
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "sensor_id": 201,
+                                            "sensor_type": "movimento",
+                                            "topics": [
+                                                {
+                                                    "topic": "mov1"
+                                                }
+                                            ],
+                                            "sensor_model": "mov501",
+                                            "sensor_model_data": []
+                                        }
+                                    ],
+                                    "actuators": [
+                                        {
+                                            "actuator_id": 901,
+                                            "actuator_type": "regulador de temperatura",
+                                            "subscriptions": [
+                                                {
+                                                    "topic": "temp1"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "actuator_id": 902,
+                                            "actuator_type": "lampada inteligente",
+                                            "subscriptions": [
+                                                {
+                                                    "topic": "mov1"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "division_name": "quarto",
+                                    "sensors": [
+                                        {
+                                            "sensor_id": 102,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "temp2"
+                                                },
+                                                {
+                                                    "topic": "tempGlobal222222"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_b",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                    "temp_base": 22,
+                                                    "max_temp_deviation": 2
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "actuators": []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "building_type": "predio",
+                    "building_name": "predio1",
+                    "floors": [
+                        {
+                            "floor_number": 0,
+                            "spaces": [
+                                {
+                                    "space_name": "loja01",
+                                    "space_type": "loja",
+                                    "divisions": [
+                                        {
+                                            "division_name": "wc",
+                                            "sensors": [],
+                                            "actuators": []
+                                        },
+                                        {
+                                            "division_name": "area cliente",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 202,
+                                                    "sensor_type": "movimento",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "mov02"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "mov501",
+                                                    "sensor_model_data": []
+                                                }
+                                            ],
+                                            "actuators": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "floor_number": 1,
+                            "spaces": [
+                                {
+                                    "space_name": "ap11",
+                                    "space_type": "apartamento",
+                                    "divisions": [
+                                        {
+                                            "division_name": "cozinha",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 301,
+                                                    "sensor_type": "det fumo",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "fire101"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "fumo",
+                                                    "sensor_model_data": []
+                                                }
+                                            ],
+                                            "actuators": [
+                                                {
+                                                    "actuator_id": 903,
+                                                    "actuator_type": "alarme",
+                                                    "subscriptions": [
+                                                        {
+                                                            "topic": "fire101"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "division_name": "sala",
+                                            "sensors": [],
+                                            "actuators": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "space_name": "esc11",
+                                    "space_type": "escritorio",
+                                    "divisions": [
+                                        {
+                                            "division_name": "sala 1",
+                                            "sensors": [],
+                                            "actuators": []
+                                        },
+                                        {
+                                            "division_name": "sala conferencia",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 401,
+                                                    "sensor_type": "luminosidade",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "lum1"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "lum403",
+                                                    "sensor_model_data": []
+                                                }
+                                            ],
+                                            "actuators": [
+                                                {
+                                                    "actuator_id": 904,
+                                                    "actuator_type": "lampada inteligente",
+                                                    "subscriptions": [
+                                                        {
+                                                            "topic": "lum1"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "block": "bairro2",
+            "configuration": [
+                {
+                    "host": "localhost:9092"
+                }
+            ],
+            "buildings": [
+                {
+                    "building_type": "casa",
+                    "building_name": "casa12",
+                    "floors": [
+                        {
+                            "floor_number": 0,
+                            "divisions": [
+                                {
+                                    "division_name": "sala",
+                                    "sensors": [
+                                        {
+                                            "sensor_id": 2101,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "temp1"
+                                                },
+                                                {
+                                                    "topic": "tempGlobal"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_a",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura exterior",
+                                                    "temp_min": 15.5,
+                                                    "temp_max": 26.0,
+                                                    "temp_peak_hour": 15
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "sensor_id": 2201,
+                                            "sensor_type": "movimento",
+                                            "topics": [
+                                                {
+                                                    "topic": "mov1"
+                                                }
+                                            ],
+                                            "sensor_model": "mov501",
+                                            "sensor_model_data": []
+                                        }
+                                    ],
+                                    "actuators": [
+                                        {
+                                            "actuator_id": 901,
+                                            "actuator_type": "regulador de temperatura",
+                                            "subscriptions": [
+                                                {
+                                                    "topic": "temp1"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "actuator_id": 902,
+                                            "actuator_type": "lampada inteligente",
+                                            "subscriptions": [
+                                                {
+                                                    "topic": "mov1"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "division_name": "quarto",
+                                    "sensors": [
+                                        {
+                                            "sensor_id": 2102,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "temp2"
+                                                },
+                                                {
+                                                    "topic": "tempGlobal222222"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_b",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                    "temp_base": 22,
+                                                    "max_temp_deviation": 2
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "actuators": []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "building_type": "predio",
+                    "building_name": "predio12",
+                    "floors": [
+                        {
+                            "floor_number": 0,
+                            "spaces": [
+                                {
+                                    "space_name": "loja01",
+                                    "space_type": "loja",
+                                    "divisions": [
+                                        {
+                                            "division_name": "wc",
+                                            "sensors": [],
+                                            "actuators": []
+                                        },
+                                        {
+                                            "division_name": "area cliente",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 2202,
+                                                    "sensor_type": "movimento",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "mov02"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "mov501",
+                                                    "sensor_model_data": []
+                                                }
+                                            ],
+                                            "actuators": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "floor_number": 1,
+                            "spaces": [
+                                {
+                                    "space_name": "ap11",
+                                    "space_type": "apartamento",
+                                    "divisions": [
+                                        {
+                                            "division_name": "cozinha",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 2301,
+                                                    "sensor_type": "det fumo",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "fire101"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "fumo",
+                                                    "sensor_model_data": []
+                                                }
+                                            ],
+                                            "actuators": [
+                                                {
+                                                    "actuator_id": 903,
+                                                    "actuator_type": "alarme",
+                                                    "subscriptions": [
+                                                        {
+                                                            "topic": "fire101"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "division_name": "sala",
+                                            "sensors": [],
+                                            "actuators": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "space_name": "esc11",
+                                    "space_type": "escritorio",
+                                    "divisions": [
+                                        {
+                                            "division_name": "sala 1",
+                                            "sensors": [],
+                                            "actuators": []
+                                        },
+                                        {
+                                            "division_name": "sala conferencia",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 2401,
+                                                    "sensor_type": "luminosidade",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "lum1"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "lum403",
+                                                    "sensor_model_data": []
+                                                }
+                                            ],
+                                            "actuators": [
+                                                {
+                                                    "actuator_id": 904,
+                                                    "actuator_type": "lampada inteligente",
+                                                    "subscriptions": [
+                                                        {
+                                                            "topic": "lum1"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "block": "bairro3",
+            "configuration": [
+                {
+                    "host": "localhost:9092"
+                }
+            ],
+            "buildings": [
+                {
+                    "building_type": "casa",
+                    "building_name": "casa13",
+                    "floors": [
+                        {
+                            "floor_number": 0,
+                            "divisions": [
+                                {
+                                    "division_name": "sala",
+                                    "sensors": [
+                                        {
+                                            "sensor_id": 3101,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "temp1"
+                                                },
+                                                {
+                                                    "topic": "tempGlobal"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_a",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura exterior",
+                                                    "temp_min": 15.5,
+                                                    "temp_max": 26.0,
+                                                    "temp_peak_hour": 15
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "sensor_id": 3201,
+                                            "sensor_type": "movimento",
+                                            "topics": [
+                                                {
+                                                    "topic": "mov1"
+                                                }
+                                            ],
+                                            "sensor_model": "mov501",
+                                            "sensor_model_data": []
+                                        },
+                                        {
+                                            "sensor_id": 103201,
+                                            "sensor_type": "movimento",
+                                            "topics": [
+                                                {
+                                                    "topic": "10mov1"
+                                                }
+                                            ],
+                                            "sensor_model": "mov501",
+                                            "sensor_model_data": []
+                                        },
+                                        {
+                                            "sensor_id": 103101,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "10temp1"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_a",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura exterior",
+                                                    "temp_min": 15.5,
+                                                    "temp_max": 26.0,
+                                                    "temp_peak_hour": 15
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "sensor_id": 103102,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "10temp2"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_b",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                    "temp_base": 22,
+                                                    "max_temp_deviation": 2
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "actuators": [
+                                        {
+                                            "actuator_id": 901,
+                                            "actuator_type": "regulador de temperatura",
+                                            "subscriptions": [
+                                                {
+                                                    "topic": "temp1"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "actuator_id": 10901,
+                                            "actuator_type": "regulador de temperatura",
+                                            "subscriptions": [
+                                                {
+                                                    "topic": "10temp1"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "actuator_id": 902,
+                                            "actuator_type": "lampada inteligente",
+                                            "subscriptions": [
+                                                {
+                                                    "topic": "mov1"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "division_name": "quarto",
+                                    "sensors": [
+                                        {
+                                            "sensor_id": 3102,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "temp2"
+                                                },
+                                                {
+                                                    "topic": "tempGlobal222222"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_b",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                    "temp_base": 22,
+                                                    "max_temp_deviation": 2
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "sensor_id": 1031021,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "10temp21"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_b",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                    "temp_base": 23,
+                                                    "max_temp_deviation": 3
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "actuators": []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "building_type": "predio",
+                    "building_name": "predio13",
+                    "floors": [
+                        {
+                            "floor_number": 0,
+                            "spaces": [
+                                {
+                                    "space_name": "loja01",
+                                    "space_type": "loja",
+                                    "divisions": [
+                                        {
+                                            "division_name": "wc",
+                                            "sensors": [],
+                                            "actuators": []
+                                        },
+                                        {
+                                            "division_name": "area cliente",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 3202,
+                                                    "sensor_type": "movimento",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "mov02"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "mov501",
+                                                    "sensor_model_data": []
+                                                },
+                                                {
+                                                    "sensor_id": 1032028,
+                                                    "sensor_type": "presenca",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "10mov0234"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "mov501",
+                                                    "sensor_model_data": []
+                                                },
+                                                {
+                                                    "sensor_id": 1031022,
+                                                    "sensor_type": "temperatura",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "10temp22"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "modelo_b",
+                                                    "sensor_model_data": [
+                                                        {
+                                                            "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                            "temp_base": 23,
+                                                            "max_temp_deviation": 3
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "actuators": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "floor_number": 1,
+                            "spaces": [
+                                {
+                                    "space_name": "ap11",
+                                    "space_type": "apartamento",
+                                    "divisions": [
+                                        {
+                                            "division_name": "cozinha",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 3301,
+                                                    "sensor_type": "det fumo",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "fire101"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "fumo",
+                                                    "sensor_model_data": []
+                                                }
+                                            ],
+                                            "actuators": [
+                                                {
+                                                    "actuator_id": 903,
+                                                    "actuator_type": "alarme",
+                                                    "subscriptions": [
+                                                        {
+                                                            "topic": "fire101"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "division_name": "sala",
+                                            "sensors": [],
+                                            "actuators": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "space_name": "esc11",
+                                    "space_type": "escritorio",
+                                    "divisions": [
+                                        {
+                                            "division_name": "sala 1",
+                                            "sensors": [],
+                                            "actuators": []
+                                        },
+                                        {
+                                            "division_name": "sala conferencia",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 3581,
+                                                    "sensor_type": "luminosidade",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "lum112"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "lum403",
+                                                    "sensor_model_data": []
+                                                },
+                                                {
+                                                    "sensor_id": 1031026,
+                                                    "sensor_type": "temperatura",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "10temp26"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "modelo_b",
+                                                    "sensor_model_data": [
+                                                        {
+                                                            "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                            "temp_base": 23,
+                                                            "max_temp_deviation": 3
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "actuators": [
+                                                {
+                                                    "actuator_id": 904,
+                                                    "actuator_type": "lampada inteligente",
+                                                    "subscriptions": [
+                                                        {
+                                                            "topic": "lum1"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "block": "bairro4",
+            "configuration": [
+                {
+                    "host": "localhost:9092"
+                }
+            ],
+            "buildings": [
+                {
+                    "building_type": "casa",
+                    "building_name": "casa14",
+                    "floors": [
+                        {
+                            "floor_number": 0,
+                            "divisions": [
+                                {
+                                    "division_name": "sala",
+                                    "sensors": [
+                                        {
+                                            "sensor_id": 113101,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "11temp1"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_a",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura exterior",
+                                                    "temp_min": 15.5,
+                                                    "temp_max": 26.0,
+                                                    "temp_peak_hour": 15
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "sensor_id": 113201,
+                                            "sensor_type": "movimento",
+                                            "topics": [
+                                                {
+                                                    "topic": "11mov1"
+                                                }
+                                            ],
+                                            "sensor_model": "mov501",
+                                            "sensor_model_data": []
+                                        },
+                                        {
+                                            "sensor_id": 113201,
+                                            "sensor_type": "movimento",
+                                            "topics": [
+                                                {
+                                                    "topic": "11mov1"
+                                                }
+                                            ],
+                                            "sensor_model": "mov501",
+                                            "sensor_model_data": []
+                                        },
+                                        {
+                                            "sensor_id": 113101,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "11temp1"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_a",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura exterior",
+                                                    "temp_min": 15.5,
+                                                    "temp_max": 26.0,
+                                                    "temp_peak_hour": 15
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "sensor_id": 113102,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "11temp2"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_b",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                    "temp_base": 22,
+                                                    "max_temp_deviation": 2
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "actuators": [
+                                        {
+                                            "actuator_id": 11901,
+                                            "actuator_type": "regulador de temperatura",
+                                            "subscriptions": [
+                                                {
+                                                    "topic": "11temp1"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "actuator_id": 11901,
+                                            "actuator_type": "regulador de temperatura",
+                                            "subscriptions": [
+                                                {
+                                                    "topic": "11temp1"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "actuator_id": 11902,
+                                            "actuator_type": "lampada inteligente",
+                                            "subscriptions": [
+                                                {
+                                                    "topic": "11mov1"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "division_name": "quarto",
+                                    "sensors": [
+                                        {
+                                            "sensor_id": 113102,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "11temp22"
+                                                },
+                                                {
+                                                    "topic": "tempGlobal222222"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_b",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                    "temp_base": 22,
+                                                    "max_temp_deviation": 2
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "sensor_id": 1131021,
+                                            "sensor_type": "temperatura",
+                                            "topics": [
+                                                {
+                                                    "topic": "11temp21"
+                                                }
+                                            ],
+                                            "sensor_model": "modelo_b",
+                                            "sensor_model_data": [
+                                                {
+                                                    "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                    "temp_base": 23,
+                                                    "max_temp_deviation": 3
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "actuators": []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "building_type": "predio",
+                    "building_name": "predio14",
+                    "floors": [
+                        {
+                            "floor_number": 0,
+                            "spaces": [
+                                {
+                                    "space_name": "loja01",
+                                    "space_type": "loja",
+                                    "divisions": [
+                                        {
+                                            "division_name": "wc",
+                                            "sensors": [],
+                                            "actuators": []
+                                        },
+                                        {
+                                            "division_name": "area cliente",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 113202,
+                                                    "sensor_type": "movimento",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "11mov02"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "mov501",
+                                                    "sensor_model_data": []
+                                                },
+                                                {
+                                                    "sensor_id": 1132028,
+                                                    "sensor_type": "presenca",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "11mov0234"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "mov501",
+                                                    "sensor_model_data": []
+                                                },
+                                                {
+                                                    "sensor_id": 1131022,
+                                                    "sensor_type": "temperatura",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "11temp222"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "modelo_b",
+                                                    "sensor_model_data": [
+                                                        {
+                                                            "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                            "temp_base": 23,
+                                                            "max_temp_deviation": 3
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "actuators": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "floor_number": 1,
+                            "spaces": [
+                                {
+                                    "space_name": "ap11",
+                                    "space_type": "apartamento",
+                                    "divisions": [
+                                        {
+                                            "division_name": "cozinha",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 113301,
+                                                    "sensor_type": "det fumo",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "11fire101"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "fumo",
+                                                    "sensor_model_data": []
+                                                }
+                                            ],
+                                            "actuators": [
+                                                {
+                                                    "actuator_id": 11903,
+                                                    "actuator_type": "alarme",
+                                                    "subscriptions": [
+                                                        {
+                                                            "topic": "11fire101"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "division_name": "sala",
+                                            "sensors": [],
+                                            "actuators": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "space_name": "esc11",
+                                    "space_type": "escritorio",
+                                    "divisions": [
+                                        {
+                                            "division_name": "sala 1",
+                                            "sensors": [],
+                                            "actuators": []
+                                        },
+                                        {
+                                            "division_name": "sala conferencia",
+                                            "sensors": [
+                                                {
+                                                    "sensor_id": 113581,
+                                                    "sensor_type": "luminosidade",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "11lum112"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "lum403",
+                                                    "sensor_model_data": []
+                                                },
+                                                {
+                                                    "sensor_id": 11358500,
+                                                    "sensor_type": "luminosidade",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "extra15"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "lum403",
+                                                    "sensor_model_data": []
+                                                },
+                                                {
+                                                    "sensor_id": 1136000,
+                                                    "sensor_type": "movimento",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "extra17"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "lum403",
+                                                    "sensor_model_data": []
+                                                },
+                                                {
+                                                    "sensor_id": 113900,
+                                                    "sensor_type": "porta",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "extra19"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "lum403",
+                                                    "sensor_model_data": []
+                                                },
+                                                {
+                                                    "sensor_id": 11340098,
+                                                    "sensor_type": "luminosidade",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "extra130"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "lum403",
+                                                    "sensor_model_data": []
+                                                },
+                                                {
+                                                    "sensor_id": 1131026,
+                                                    "sensor_type": "temperatura",
+                                                    "topics": [
+                                                        {
+                                                            "topic": "11temp26"
+                                                        }
+                                                    ],
+                                                    "sensor_model": "modelo_b",
+                                                    "sensor_model_data": [
+                                                        {
+                                                            "description": "este sensor utiliza um modelo que simula o comportamento da temperatura interior",
+                                                            "temp_base": 23,
+                                                            "max_temp_deviation": 3
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "actuators": [
+                                                {
+                                                    "actuator_id": 11904,
+                                                    "actuator_type": "lampada inteligente",
+                                                    "subscriptions": [
+                                                        {
+                                                            "topic": "11lum112"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
