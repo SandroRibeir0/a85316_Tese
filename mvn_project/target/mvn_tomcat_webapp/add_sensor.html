@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Add Sensor 2</title>
+    <script>
+        // Função para mostrar/esconder o campo de temperatura máxima
+        function checkSensorType() {
+            var sensorType = document.getElementById("type").value.toLowerCase();
+            var sensorModel = document.getElementById("model").value.toLowerCase();
+            var exteriorTempSensor = document.getElementById("exteriorTempSensor");
+            var interiorTempSensor = document.getElementById("interiorTempSensor");
+
+            exteriorTempSensor.style.display = "none";
+            interiorTempSensor.style.display = "none";
+
+            if (sensorType == "temperatura" && sensorModel == "modelo_a") {
+                exteriorTempSensor.style.display = "block";
+            }else if(sensorType == "temperatura" && sensorModel == "modelo_b"){
+                interiorTempSensor.style.display = "block";
+            }             
+        }
+
+        // Adicionar eventos para chamar a função checkSensorType ao alterar os valores de type ou model
+        window.onload = function() {
+            document.getElementById("type").addEventListener("input", checkSensorType);
+            document.getElementById("model").addEventListener("input", checkSensorType);
+        };
+    </script>
+</head>
+<body>
+    <h1>Adicionar Sensor</h1>
+    <form action="/mvn_tomcat_webapp/test" method="post">
+        <label for="host">Host :</label>
+        <input type="text" id="host" name="host" required><br><br>
+
+        <label for="id">Sensor ID :</label>
+        <input type="text" id="id" name="id" required><br><br>
+
+        <label for="type">Sensor Type :</label>
+        <input type="text" id="type" name="type" required><br><br>
+
+        <label for="model">Sensor Model :</label>
+        <input type="text" id="model" name="model" required><br><br>
+
+        <div id="exteriorTempSensor" style="display: none;">
+            <label for="tempMin">Minimum Temperature :</label>
+            <input type="number" id="tempMin" name="tempMin" step="0.1"><br><br>
+
+            <label for="tempMax">Maximum Temperature :</label>
+            <input type="number" id="tempMax" name="tempMax" step="0.1"><br><br>
+
+            <label for="tempPeakHour">Temperature Peak Hour :</label>
+            <input type="number" id="tempPeakHour" name="tempPeakHour" step="0.1"><br><br>
+        </div>
+
+        <div id="interiorTempSensor" style="display: none;">
+            <label for="tempBase">Base Temperature :</label>
+            <input type="number" id="tempBase" name="tempBase" step="0.1"><br><br>
+
+            <label for="maxTempDeviation">Maximum Temperature Deviation:</label>
+            <input type="number" id="maxTempDeviation" name="maxTempDeviation" step="0.1"><br><br>
+        </div>
+
+        <label for="block">Block :</label>
+        <input type="text" id="block" name="block" required><br><br>
+
+        <label for="building">Building :</label>
+        <input type="text" id="building" name="building" required><br><br>
+
+        <label for="topics">Topics :</label>
+        <input type="text" id="topics" name="topics" required><br><br>
+
+        <input type="submit" value="Adicionar Sensor">
+    </form>
+    <br>
+    <a href="/mvn_tomcat_webapp/test">Voltar à Página Principal</a>
+</body>
+</html>

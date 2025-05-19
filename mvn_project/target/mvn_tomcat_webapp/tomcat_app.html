@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Kafka Blocks</title>
+        
+        <!---------- CSS ----------> 
+        <style>
+            body {
+                margin: 0;
+                font-family: 'Roboto', 'Arial', sans-serif;
+                background-color: #f4f4f9;
+                color: #333;
+                line-height: 1.6;
+                display: flex;
+                flex-direction: row;
+                height: 100vh;
+                overflow: hidden;
+            }
+    
+            .leftPanel {
+                position: relative;
+                width: 35%; /* 35% da largura da tela */
+                height: 100%; /* Preenche a altura total */
+                overflow-y: auto; /* Rolagem vertical para conteúdo excedente */
+                background: linear-gradient(135deg, #ffffff, #e9ecef);
+                padding: 10px;
+                box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+            }
+    
+            .rightPanel {
+                width: 65%; /* 65% da largura restante */
+                height: 100%;
+                background-color: #ffffff;
+                padding: 20px;
+                overflow-y: auto; /* Garantir rolagem, se necessário */
+            }
+    
+            .dropContainer {
+                position: relative;
+                float: left;
+                width: auto;
+                margin: 20px;
+                margin-top: 110px;
+                cursor: pointer;
+                overflow: visible;
+                border-radius: 8px; 
+                background: inherit;
+                
+                box-shadow: none;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+                display: flex; /* Substituir float por flexbox */
+                flex-direction: column;
+                gap: 2px;
+                padding: 10px;
+                box-sizing: border-box; 
+            }
+    
+            .dropContainer:hover {
+                transform: translateY(-5px);
+                box-shadow: none;
+            }
+    
+            .blockBtn {
+                float: left;
+                width: 220px;
+                margin-bottom: 2px;
+                padding: 10px 0px;
+                font-size: 16px;
+                font-weight: bold;
+                text-align: center;
+                border-radius: 5px;
+                transition: background-color 0.3s ease, color 0.3s ease;
+                cursor: pointer;
+            }
+    
+            .normalBlock {
+                background-color: #2a9d8f;
+                color: white;
+            }
+    
+            .normalBlock:hover {
+                background-color: #21867a;
+            }
+    
+            .activeBlock {
+                background-color: #e9c46a;
+                color: black;
+            }
+    
+            .activeBlock:hover {
+                background-color: #f4a261;
+            }
+    
+            .houseBtn {
+                float: left;
+                width: 200px;
+                margin-bottom: 2px;
+                margin-left: 20px;
+                padding: 10px 15px 10px 35px;
+                font-size: 14px;
+                background-position: left center;
+                background-repeat: no-repeat;
+                background-size: 20px 20px;
+                text-align: left;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+                cursor: pointer;
+            }
+    
+            .houseBtn:hover {
+                background-color: #21867a;
+            }
+    
+            .normalHouse {
+                background-color: #36ac9e;
+            }
+    
+            .activeHouse {
+                background-color: #f4e1a6;
+            }
+    
+            .hiddenHouse {
+                display: none;
+            }
+            
+            .floorBtn {
+                float: left;
+                width: 180px;
+                margin-bottom: 2px;
+                margin-left: 40px;
+                padding: 10px 15px 10px 35px;
+                font-size: 14px;
+                background-position: left center;
+                background-repeat: no-repeat;
+                background-size: 20px 20px;
+                text-align: left;
+                border-radius: 5px;
+                transition: background-color 0.3s ease;
+                cursor: pointer;
+            }
+    
+            .floorBtn:hover {
+                background-color:#21867a;
+            }
+    
+            .normalFloor {
+                background-color: #36ac9e;
+            }
+    
+            .activeFloor {
+                background-color: #f4e1a6;
+            }
+    
+            .hiddenFloor {
+                display: none;
+            }
+
+            .sensorContainer {
+                position: relative;
+                float: left;
+                width: 95%;
+                height: auto;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                background-color: #ffffff;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+    
+            .sensorContainer p {
+                margin: 8px 0;
+                color: #555;
+            }
+    
+            .sensorContainer .title {
+                font-size: 20px;
+                font-weight: bold;
+                margin: 10px 0;
+                color: #2a9d8f;
+            }
+
+            #simulationInfo { 
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                height: 40px; /* Altura consistente */
+                background-color: #e9ecef;
+                font-size: 16px; 
+                font-weight: bold; 
+                color: #2a9d8f;
+                /* padding: 10px; */
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                text-align: center; 
+                line-height: 40px;
+            }
+
+            
+            /* Botão "Start Simulation" */
+            .startSimButton {
+                position: absolute;
+                top: 60px;
+                left: 10px;
+                width: 130px; /* Largura consistente */
+                height: 40px; /* Altura consistente */
+                background-color: #2a9d8f; /* Cor harmonizada */
+                color: white;
+                font-size: 16px;
+                font-weight: bold;
+                text-align: center;
+                line-height: 40px; /* Centraliza o texto verticalmente */
+                border: none;
+                cursor: pointer;
+                border-radius: 8px;
+                transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            }
+    
+            .startSimButton:hover {
+                background-color: #21867a;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            }
+    
+            .startSimButton:disabled {
+                background-color: #b5c9c6; /* Cinza suave */
+                cursor: not-allowed;
+                box-shadow: none;
+            }
+    
+            /* Display do relógio da simulação */
+            .simulationTimer {
+                position: absolute;
+                top: 60px;
+                right: 10px;
+                width: 130px; /* Mesma largura do botão */
+                height: 40px; /* Mesma altura do botão */
+                background-color: #2a9d8f; /* Cor harmonizada */
+                color: white;
+                font-size: 16px;
+                font-weight: bold;
+                text-align: center;
+                line-height: 40px; /* Centraliza o texto verticalmente */
+                border: none;
+                border-radius: 8px;
+            }
+
+            /* Estilo da tabela de sensores */
+            /* Estilo da tabela de sensores */
+            .sensorTable {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 0px;
+            }
+
+            /* Remover bordas visíveis */
+            .sensorTable th, .sensorTable td {
+                padding: 8px 12px;
+                text-align: left;
+                border: none; /* Remover as bordas */
+            }
+
+            /* Estilo para o cabeçalho da tabela */
+            .sensorTable th {
+                background-color: #e0f7fa; /* Tom mais claro para a primeira linha */
+                color: #2a9d8f;
+                font-weight: bold;
+            }
+
+            /* Estilo para linhas alternadas da tabela */
+            .sensorTable tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            /* Efeito de destaque ao passar o mouse sobre uma linha */
+            .sensorTable tr:hover {
+                background-color: #f1f1f1;
+            }
+
+            .houseTitle {
+                font-size: 18px;
+                font-weight: bold;
+                color: #2a9d8f;
+                margin-bottom: 10px;
+                text-align: center; /* Alinha o título no centro da área da tabela */
+            }
+
+            .sensorInfo {
+                position: relative;
+                float: left;
+                width: 95%; /* Mesmo valor definido em .sensorContainer */
+                box-sizing: border-box; /* Garante consistência na largura */
+                font-size: 14px;
+                color: #495057;
+                margin-top: 10px;
+                padding: 8px;
+                /* background-color: #f8f9fa; */
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                text-align: center; /* Centraliza o texto */
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            #chartContainer {
+                
+                width: 100%;
+                max-width: 800px;
+                margin: 20px auto;
+                
+                background-color: #f9f9f9;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            #sensorChart {
+                background-color: white; /* Cor de fundo */
+                display: none;
+            }
+
+        </style>
+    </head>
+    <!--------------------------------------------------------------------->
+    <body>
+        <div class="leftPanel">
+            <!-- Conteúdo do lado esquerdo -->
+            <div id="blocksDropdown" class="dropContainer"></div>
+
+            
+            <!-- Botão para iniciar a simulação -->
+            <button id="startSimButton" class="startSimButton" onclick="startSimRequest()">Start</button>
+
+            <!-- Display do tempo da simulação -->
+            <div class="simulationTimer" id="simulationTimer">00:00:00</div>
+
+            <div id="simulationInfo" ></div>
+        </div>
+        
+        <div class="rightPanel">
+            <div id="houseTitle" class="houseTitle"></div>
+
+            <div id="sensorList" class="sensorContainer">
+                
+                <!-- Conteúdo do lado direito -->
+            </div>
+
+            <div id="selectedSensorInfo" class="sensorInfo"></div>
+
+            <div id="chartContainer" style="width: 100%; max-width: 600px; margin: 20px auto;">
+                <canvas id="sensorChart"></canvas>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </body>   
+    <script>
+        /******** Variables ********/
+
+        let cityData = null;
+
+        let sensorChartInstance = null; // Variável global para armazenar a instância do gráfico
+
+        
+        /******** Internal Variables ********/
+
+        /******** Dictionary of all the dropdown items ********/
+        let dropdownList = {};
+
+        // Clock display variables
+        let timerInterval;
+        let startTime;
+        
+        let currBlock = "";
+        let currHouse = "";
+        let currFloor = "";
+
+        let intervalId = null;
+        let sensorList = null;
+
+        // Function to identify the simulation from its URL
+        function getSimulationNameFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            let simID = params.get("simulation");
+            console.log("🚀 ~ getSimulationNameFromURL ~ simID:", simID)
+            return simID;
+        }
+        
+        async function initializeApp() {
+            console.log("🚀 ~ initializeApp ~ initializeApp:")
+            await fetchCityData()
+                .then(() => {
+                    PrepareDropdown();
+                })
+                .then(() => {
+                    SincSimulation();
+                })
+                .catch(error => {
+                    console.error('Erro ao inicializar o app:', error);
+                });
+        }
+
+        // Identify and save the simulation name/id
+        const simulationName = getSimulationNameFromURL();
+        
+        if (simulationName) {
+                // Adiciona o ID na interface
+            const simulationInfoElement = document.getElementById("simulationInfo");
+            simulationInfoElement.innerHTML = `Simulation: <span style="color: #264653;">${simulationName}</span>`;
+
+            window.addEventListener("load", initializeApp);
+        } else {
+            alert("Nenhuma simulação selecionada!");
+        }
+
+        //window.addEventListener("load", initializeApp);
+        
+        /******** COMMUNICATION FUNCTIONS ********/
+        
+        /******** Function to fetch the city structure configuration file ********/
+
+        // VERSION 2 - function to request the simulation config file
+        async function fetchCityData() {
+            try {
+                let response = await fetch('/mvn_tomcat_webapp/app', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=getSimulationConfig&simID=${encodeURIComponent(simulationName)}`
+                });
+
+                const data = await response.json();
+                console.log("🚀 ~ fetchCityData ~ data:", data);
+
+                // Armazena os dados de configuração na variável cityData
+                cityData = data["configFile"];
+                console.log("🚀 ~ fetchCityData ~ cityData:", cityData);
+
+            } catch (error) {
+                console.error('Erro ao obter o ficheiro de configuração:', error);
+            }
+        } 
+
+        /* 
+        // VERSION 1 -  get config file
+        async function fetchCityData() {
+            console.log("🚀 ~ fetchCityData")
+            try {
+                let response = await fetch('/mvn_tomcat_webapp/app?action=getJSON');
+                cityData = await response.json(); 
+                console.log("🚀 ~ fetchCityData ~ cityData:", cityData);           
+            } catch (error) {
+                console.error('Erro ao buscar dados da cidade:', error);
+            }
+        }
+        */
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  INTERFACE FUNCTIONS
+        //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // Prepares the dropdown list and interface
+        function PrepareDropdown(){
+
+            // Loops through the city´s data
+            for(let i = 0; i < cityData.blocks.length; i++){
+
+                // Creates the block's div button
+                let newBlock = document.createElement("div");
+
+                // Adds the block's ID
+                newBlock.id = cityData.blocks[i].block;
+
+                // Adds the block's CSS classes
+                newBlock.classList.add("blockBtn");
+                newBlock.classList.add("normalBlock");
+
+                // Adds the block's text label
+                newBlock.innerHTML = cityData.blocks[i].block;
+
+                // Adds the button behavior
+                newBlock.addEventListener("click", ToggleBlock); 
+
+                // Adds the block to the dropdown container
+                document.getElementById("blocksDropdown").appendChild(newBlock);
+
+                // Prepares the block's list of houses
+                dropdownList[cityData.blocks[i].block] = [];
+
+                // Loops through the block's list of buildings
+                for(let j = 0; j < cityData.blocks[i].buildings.length; j++){
+
+                    // Creates the building's div button
+                    let newHouse = document.createElement("div");
+                    
+                    // Adds the building's ID
+                    newHouse.id = cityData.blocks[i].buildings[j].building_name;
+
+                    // Stores in the tag's data the building's location in the cityData list
+                    newHouse.data = i + "_" + j;
+
+                    // Adds the house's CSS classes
+                    newHouse.classList.add("houseBtn");
+                    newHouse.classList.add("normalHouse");
+                    newHouse.classList.add("hiddenHouse");
+
+                    // Adds the block's text label
+                    newHouse.innerHTML = cityData.blocks[i].buildings[j].building_name;    // + " (" + cityData[i].buildings[j].type + ")";
+
+                    // Adds the button behavior
+                    newHouse.addEventListener("click", ToggleHouse); 
+
+                    // Adds the house to the dropdown container
+                    document.getElementById("blocksDropdown").appendChild(newHouse);
+                    
+                    // Adds the house's ID to the respective block list
+                    dropdownList[cityData.blocks[i].block][cityData.blocks[i].buildings[j].building_name] = [];
+
+                    // Adiciona os andares
+                    for (let k = 0; k < cityData.blocks[i].buildings[j].floors.length; k++) {
+                        let newFloor = document.createElement("div");
+                        // ID único para o andar
+                        newFloor.id = `${cityData.blocks[i].buildings[j].building_name}_floor_${cityData.blocks[i].buildings[j].floors[k].floor_number}`;
+                        newFloor.data = `${i}_${j}_${k}`;
+                        console.log("🚀 ~ PrepareDropdown ~ newFloor.id:", newFloor.id)
+                        console.log("🚀 ~ PrepareDropdown ~ newFloor.data:", newFloor.data)
+                        newFloor.classList.add("floorBtn", "normalFloor", "hiddenFloor");
+                        newFloor.innerHTML = `Floor ${cityData.blocks[i].buildings[j].floors[k].floor_number}`;
+                        newFloor.addEventListener("click", ToggleFloor);
+                        document.getElementById("blocksDropdown").appendChild(newFloor);
+
+                        dropdownList[cityData.blocks[i].block][cityData.blocks[i].buildings[j].building_name].push(
+                            newFloor.id);
+                        
+                    }
+                }                    
+            }
+            console.log("🚀 ~ PrepareDropdown ~ dropdownList:", dropdownList);
+        }
+
+        ///////////////////////////////////////////////////
+
+        // Toggles the block's activity status and visibility of its respective houses
+        function ToggleBlock(){
+
+            // Toggle's the block's CSS active status
+            this.classList.toggle("normalBlock");
+            this.classList.toggle("activeBlock");
+
+            // Checks if a block had already been selected
+            if(currBlock !== ""){
+
+                // Avoids calling the toggle twice
+                if(currBlock !== this.id){
+
+                    // Toggles the block's CSS active status
+                    document.getElementById(currBlock).classList.toggle("normalBlock");
+                    document.getElementById(currBlock).classList.toggle("activeBlock");
+                }
+
+                // Itera sobre os edifícios do bloco previamente selecionado
+                for (const buildingName in dropdownList[currBlock]) {
+                    // Verifica se a propriedade pertence ao objeto e não à cadeia de protótipos
+                    if (dropdownList[currBlock].hasOwnProperty(buildingName)) {
+                        // Alterna a visibilidade do edifício
+                        document.getElementById(buildingName).classList.toggle("hiddenHouse");
+
+                        // Esconde os andares associados ao edifício
+                        const floors = document.querySelectorAll(`[id^="${buildingName}_floor_"]`);
+                        floors.forEach(floor => floor.classList.add("hiddenFloor"));
+                    }
+                }
+            }
+            
+            // Checks if the block was already selected
+            if(currBlock === this.id){
+
+                // Clears the selection
+                currBlock = ""; 
+            }
+            else{
+                // Updates the selection
+                currBlock = this.id;
+
+                // Itera sobre os edifícios do bloco recém-selecionado
+                for (const buildingName in dropdownList[currBlock]) {
+                    if (dropdownList[currBlock].hasOwnProperty(buildingName)) {
+                        // Alterna a visibilidade do edifício
+                        document.getElementById(buildingName).classList.toggle("hiddenHouse");
+
+                        // Esconde os andares associados ao edifício
+                        const floors = document.querySelectorAll(`[id^="${buildingName}_floor_"]`);
+                        floors.forEach(floor => floor.classList.add("hiddenFloor"));
+                    }
+                }
+            }
+        }
+
+        ///////////////////////////////////////////////////
+        /* 
+        // Toggles the house's activity status and shows the respective sensor info            
+        function ToggleHouse(){
+
+            // Toggle's the house's CSS active status
+            this.classList.toggle("normalHouse");
+            this.classList.toggle("activeHouse");
+
+            // Checks if a house had already been selected
+            if(currHouse !== "" && currHouse !== this.id){
+
+                // Toggles the block's CSS active status
+                document.getElementById(currHouse).classList.toggle("normalHouse");
+                document.getElementById(currHouse).classList.toggle("activeHouse"); 
+            }
+
+            // Update the house title
+            const houseTitleElement = document.getElementById("houseTitle");
+            if (!currHouse === this.id) {
+                //houseTitleElement.innerHTML = "Selecione uma casa para ver os sensores";
+            } else {
+                const blockID = Number(this.data.split("_")[0]);
+                const houseID = Number(this.data.split("_")[1]);
+                const houseName = cityData.blocks[blockID].buildings[houseID].building_name; // Supondo que há um atributo "name"
+                houseTitleElement.innerHTML = `${houseName}`;
+            }
+
+            // Prints the house's sensor info
+            PrintSensors(Number(this.data.split("_")[0]), Number(this.data.split("_")[1]));
+
+            // Checks if the house was already selected
+            if(currHouse === this.id){
+
+                // Clears the selection
+                currHouse = ""; 
+            }
+            else{
+                // Updates the selection
+                currHouse = this.id;
+            }
+        }
+         */
+
+        function ToggleHouse() {
+            // Alterna as classes de estado ativo do edifício
+            this.classList.toggle("normalHouse");
+            this.classList.toggle("activeHouse");
+
+            const [blockID, houseID] = this.data.split("_").map(Number);
+            console.log("🚀 ~ ToggleHouse ~ this.id:", this.id);
+            if (currHouse === this.id) {
+                
+                /* // Se o edifício já estava selecionado, limpa a seleção e esconde os andares
+                const blockName = cityData.blocks[blockID].block;
+                const buildingName = cityData.blocks[blockID].buildings[houseID].building_name;
+
+                dropdownList[blockName][buildingName].forEach(floorNumber => {
+                    const floorElement = document.getElementById(floorNumber); // Aqui usamos o ID real
+                    if (floorElement) {
+                        floorElement.classList.toggle("hiddenFloor");
+                    }
+                });
+
+                currHouse = "";
+                document.getElementById("houseTitle").innerHTML = "Selecione uma casa para ver os sensores"; */
+
+                // Limpa a seleção e esconde os andares
+                const floors = document.querySelectorAll(`[id^="${this.id}_floor_"]`);
+                floors.forEach(floor => floor.classList.toggle("hiddenFloor"));
+                currHouse = "";
+                document.getElementById("houseTitle").innerHTML = "Select a building";
+            } else {
+                // Caso contrário, atualiza a seleção e exibe os andares
+                /* const blockName = cityData.blocks[blockID].block;
+                const buildingName = cityData.blocks[blockID].buildings[houseID].building_name;
+
+                currHouse = this.id;
+
+                dropdownList[blockName][buildingName].forEach(floorNumber => {
+                    const floorElement = document.getElementById(floorNumber); // Aqui usamos o ID real
+                    if (floorElement) {
+                        floorElement.classList.toggle("hiddenFloor");
+                    }
+                });
+
+                document.getElementById("houseTitle").innerHTML = `${buildingName}`; */
+
+                // Atualiza a seleção e mostra os andares
+                currHouse = this.id;
+                const floors = document.querySelectorAll(`[id^="${this.id}_floor_"]`);
+                floors.forEach(floor => floor.classList.toggle("hiddenFloor"));
+                document.getElementById("houseTitle").innerHTML = cityData.blocks[blockID].buildings[houseID].building_name;
+                console.log(`Andares visíveis para casa: ${this.id}`);
+            }
+        }
+
+        function ToggleFloor() {
+            // Alterna o estado CSS do andar
+            this.classList.toggle("normalFloor");
+            this.classList.toggle("activeFloor");
+
+            /* // Checks if a house had already been selected
+            if(currFloor !== "" && currFloor !== this.id){
+                // Toggles the block's CSS active status
+                document.getElementById(currHouse).classList.toggle("normalFloor");
+                document.getElementById(currHouse).classList.toggle("activeFloor"); 
+            } */
+
+            // Obtém os índices do bloco, edifício e andar
+            const [blockID, houseID, floorID] = this.data.split("_").map(Number);
+            console.log("🚀 ~ ToggleFloor ~ houseID:", houseID);
+            console.log("🚀 ~ ToggleFloor ~ blockID:", blockID);
+            console.log("🚀 ~ ToggleFloor ~ floorID:", floorID);
+
+            // Atualiza o título com o nome completo do andar
+            const floorTitleElement = document.getElementById("houseTitle");
+            const floorName = `Floor ${floorID}`;
+            const houseName = cityData.blocks[blockID].buildings[houseID].building_name;
+            floorTitleElement.innerHTML = `${houseName} - ${floorName}`;
+
+            // Mostra os sensores do andar selecionado
+            PrintSensors(blockID, houseID, floorID);
+
+            // Checks if the house was already selected
+            if(currHouse === this.id){
+                // Clears the selection
+                currFloor = ""; 
+            }
+            else{
+                // Updates the selection
+                currFloor = this.id;
+            }
+        }
+
+        async function SincSimulation() {
+            try {
+                let status = await requestSimulationStatus();
+                //console.log("🚀 ~ checkSimulationStatus ~ status request response:", status);
+
+                // If the simulation is active - sincronize some features
+                if (status.simulationActive == true){    
+                    // Disable button
+                    const button = document.getElementById("startSimButton");
+                    button.disabled = true;
+                    
+                    // Request simulation start timestamp from the sevlet
+                    console.log("Sincronizar o display...");
+                    try {
+                        
+                        let response = await fetch('/mvn_tomcat_webapp/app', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: `action=getSimStartTime&simID=${encodeURIComponent(simulationName)}`
+                        });
+                        
+                        let timestamp = await response.json(); 
+                        console.log("🚀 ~ SincSimulation ~ timestamp:", timestamp)
+                        // Update the clock display
+                        updateClock(timestamp.simulationStartTime);      
+                    } catch (error) {
+                        console.error('Erro ao iniciar simulação', error);
+                    }
+                    // Call "CheckSimulationStatus" to reset everything once the simulation ends
+                    checkSimulationStatus();                        
+                } 
+            } catch (error) {
+                console.error('Erro ao sincronizar simulação', error);
+            }
+        }
+
+        ///////////////////////////////////////////////////
+        /* Função para iniciar a contagem do tempo */
+        function startClock() {
+            startTime = new Date(); // Marca o tempo inicial
+
+            updateClock(startTime);
+        }
+
+        function updateClock(startTime){
+            timerInterval = setInterval(() => {
+                const now = new Date();
+                const elapsed = now - startTime; // Diferença em milissegundos
+
+                const hours = Math.floor(elapsed / 3600000); // Horas
+                const minutes = Math.floor((elapsed % 3600000) / 60000); // Minutos
+                const seconds = Math.floor((elapsed % 60000) / 1000); // Segundos
+
+                // Atualiza o display do timer
+                document.getElementById("simulationTimer").textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000); // Atualiza a cada segundo
+        }
+
+        /* Função para parar o timer */
+        function stopClock() {
+            clearInterval(timerInterval);
+            document.getElementById("simulationTimer").textContent = "00:00:00"; // Reseta o timer
+        }
+
+        // Start Simulation
+        async function startSimRequest() {
+            // Disable button
+            const button = document.getElementById("startSimButton");
+            button.disabled = true;
+
+            // Inicia o timer da simulação
+            startClock();
+
+            // Change button background color
+            button.style.backgroundColor = "grey";
+
+            console.log("Iniciando a simulação...");
+            try {
+                let response = await fetch('/mvn_tomcat_webapp/app', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=startSIM&simID=${encodeURIComponent(simulationName)}`
+                });
+
+                //let response = await fetch('/mvn_tomcat_webapp/app?action=startSIM'); 
+                //checkSimulationStatus();         
+            } catch (error) {
+                console.error('Erro ao iniciar simulação', error);
+            }
+            console.log("SAI DA FUNÇÃO DE INICIAR SIMULAÇÃO");
+            checkSimulationStatus();
+        }
+
+        // Function to reactivate the SIM START button
+        function enableStartButton() {
+            const button = document.getElementById("startSimButton");
+            button.disabled = false;
+            button.style.backgroundColor = "#006400"; // Cor original do botão
+        }
+
+        // Function to check the simulation status
+        async function checkSimulationStatus(){
+    
+            console.log("Verificando o estado da simulação...");
+            try {
+                let status = await requestSimulationStatus();
+                console.log("🚀 ~ checkSimulationStatus ~ status request response:", status);
+
+                if (status.simulationActive == false){    
+                    // The simulation has ended
+                    enableStartButton();
+                    stopClock();
+                } else{
+                    setTimeout(checkSimulationStatus, 5000); // Verifica a cada 5 segundos
+                }
+            } catch (error) {
+                console.error('Erro ao iniciar simulação', error);
+            }
+        }
+
+        async function requestSimulationStatus(){
+            try {
+                let response = await fetch('/mvn_tomcat_webapp/app', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=getSimStatus&simID=${encodeURIComponent(simulationName)}`
+                });
+
+                let status = await response.json(); 
+
+                return status;
+
+            } catch (error) {
+                console.error('Erro ao obter o estado da simulação:', error);
+            }                
+        }
+
+        // Prints the respective sensor info
+        function PrintSensors(blockID, houseID, floorNumber){
+            //console.log(cityData[blockID].buildings[houseID].sensors)
+
+            if (intervalId !== null) {
+                clearInterval(intervalId);
+                //console.log("Intervalo anterior limpo.");
+            }
+            
+            if (sensorList) {
+                sensorList.innerHTML = '';  // Opcional: limpar lista se necessário
+                //console.log(`Novo sensorList atualizado com id ${newSensorListId}`);
+            }
+
+            // Clears the sensor container
+            document.getElementById("sensorList").innerHTML = "";
+
+            // Creates the table element
+            let table = document.createElement("table");
+            table.classList.add("sensorTable");
+
+            // Creates the table header row
+            let headerRow = document.createElement("tr");
+            let headerTitle = document.createElement("th");
+            headerTitle.innerHTML = "Sensor ID";
+            let headerType = document.createElement("th");
+            headerType.innerHTML = "Sensor Type";
+            let headerData = document.createElement("th");
+            headerData.innerHTML = "Sensor Status";
+            let headerTimestamp = document.createElement("th");
+            headerTimestamp.innerHTML = "Data Timestamp";
+
+            // Append header cells to the header row
+            headerRow.appendChild(headerTitle);
+            headerRow.appendChild(headerType)
+            headerRow.appendChild(headerData);
+            headerRow.appendChild(headerTimestamp);
+            table.appendChild(headerRow);
+            
+            // Check for spaces
+            if (cityData.blocks[blockID].buildings[houseID].floors[floorNumber].hasOwnProperty("spaces") && 
+                cityData.blocks[blockID].buildings[houseID].floors[floorNumber]["spaces"] != null){
+                
+                for(let j = 0; j < cityData.blocks[blockID].buildings[houseID].floors[floorNumber].spaces.length; j++){
+                
+                    for(let z = 0; z < cityData.blocks[blockID].buildings[houseID].floors[floorNumber].spaces[j].divisions.length; z++){
+                    
+                        // Check for sensors
+                        if (cityData.blocks[blockID].buildings[houseID].floors[floorNumber].spaces[j].divisions[z].hasOwnProperty("sensors") && 
+                            cityData.blocks[blockID].buildings[houseID].floors[floorNumber].spaces[j].divisions[z]["sensors"] != null){
+                            
+                            for(let k = 0; k < cityData.blocks[blockID].buildings[houseID].floors[floorNumber].spaces[j].divisions[z].sensors.length; k++){
+                                // Creates a new table row for each sensor
+                                let row = document.createElement("tr");
+
+                                // Creates a table cell for the sensor ID
+                                let cellTitle = document.createElement("td");
+                                cellTitle.innerHTML = cityData.blocks[blockID].buildings[houseID].floors[floorNumber].spaces[j].divisions[z].sensors[k].sensor_id;
+
+                                // Creates a table cell for the sensor Type
+                                let cellType = document.createElement("td");
+                            
+                                let type = cityData.blocks[blockID].buildings[houseID].floors[floorNumber].spaces[j].divisions[z].sensors[k].sensor_type;
+
+                                const icon = document.createElement("img");
+                                // If the simulation is active
+                                if (type == "temperatura"){    
+                                    icon.src = "assets/icons/celsius.png";  // Caminho para o ícone verde
+                                    icon.alt = "Temperature";  // Texto alternativo para o ícone
+                                    icon.width = 20;      // Define o tamanho do ícone
+                                    icon.height = 20;
+                                    cellType.appendChild(icon);          
+                                } else{
+                                    icon.src = "assets/icons/sensor.png";  // Caminho para o ícone vermelho
+                                    icon.alt = "Sensor";  // Texto alternativo para o ícone
+                                    icon.width = 20;        // Define o tamanho do ícone
+                                    icon.height = 20;
+                                    cellType.appendChild(icon);
+                                }
+                                
+                                // Creates a table cell for the sensor data
+                                let cellData = document.createElement("td");
+                                cellData.innerHTML = (cityData.blocks[blockID].buildings[houseID].floors[floorNumber].spaces[j].divisions[z].sensors[k]["data"] = 0);
+
+                                // Creates a table cell for the sensor data timestamp
+                                let cellTimestamp = document.createElement("td");
+                                cellData.innerHTML = (cityData.blocks[blockID].buildings[houseID].floors[floorNumber].spaces[j].divisions[z].sensors[k]["timestamp"] = 0);
+                                
+                                // Adiciona evento de clique à linha
+                                row.addEventListener("click", () => {
+                                    displaySensorInfo(cityData.blocks[blockID].buildings[houseID].floors[floorNumber].spaces[j].divisions[z].sensors[k].topics[0].topic, 
+                                    cityData.blocks[blockID].block, cityData.blocks[blockID].buildings[houseID].building_name,
+                                    cityData.blocks[blockID].buildings[houseID].floors[floorNumber].spaces[j].divisions[z].sensors[k].sensor_id);
+                                });
+
+                                // Appends the cells to the row
+                                row.appendChild(cellTitle);
+                                row.appendChild(cellType);
+                                row.appendChild(cellData);
+                                row.appendChild(cellTimestamp);
+                                
+                                // Adds the row to the table
+                                table.appendChild(row);
+                            }
+                            // Appends the table to the sensorList container
+                            document.getElementById("sensorList").appendChild(table);
+                        }                                
+                    }
+                }
+            }else{
+                for(let z = 0; z < cityData.blocks[blockID].buildings[houseID].floors[floorNumber].divisions.length; z++){
+                    
+                    // Check for sensors
+                    if (cityData.blocks[blockID].buildings[houseID].floors[floorNumber].divisions[z].hasOwnProperty("sensors") && 
+                        cityData.blocks[blockID].buildings[houseID].floors[floorNumber].divisions[z]["sensors"] != null){
+                        
+                        for(let k = 0; k < cityData.blocks[blockID].buildings[houseID].floors[floorNumber].divisions[z].sensors.length; k++){
+                            // Creates a new table row for each sensor
+                            let row = document.createElement("tr");
+
+                            // Creates a table cell for the sensor ID
+                            let cellTitle = document.createElement("td");
+                            cellTitle.innerHTML = cityData.blocks[blockID].buildings[houseID].floors[floorNumber].divisions[z].sensors[k].sensor_id;
+
+                            // Creates a table cell for the sensor Type
+                            let cellType = document.createElement("td");
+                            let type = cityData.blocks[blockID].buildings[houseID].floors[floorNumber].divisions[z].sensors[k].sensor_type;
+
+                            const icon = document.createElement("img");
+                            // If the simulation is active
+                            if (type == "temperatura"){    
+                                icon.src = "assets/icons/celsius.png";  // Caminho para o ícone verde
+                                icon.alt = "Temperature";  // Texto alternativo para o ícone
+                                icon.width = 20;      // Define o tamanho do ícone
+                                icon.height = 20;
+                                cellType.appendChild(icon);          
+                            } else{
+                                icon.src = "assets/icons/sensor.png";  // Caminho para o ícone vermelho
+                                icon.alt = "Sensor";  // Texto alternativo para o ícone
+                                icon.width = 20;        // Define o tamanho do ícone
+                                icon.height = 20;
+                                cellType.appendChild(icon);
+                            }
+
+                            // Creates a table cell for the sensor data
+                            let cellData = document.createElement("td");
+                            cellData.innerHTML = (cityData.blocks[blockID].buildings[houseID].floors[floorNumber].divisions[z].sensors[k]["data"] = 0);
+
+                            // Creates a table cell for the sensor data timestamp
+                            let cellTimestamp = document.createElement("td");
+                            cellData.innerHTML = (cityData.blocks[blockID].buildings[houseID].floors[floorNumber].divisions[z].sensors[k]["timestamp"] = 0);
+
+                            // Adiciona evento de clique à linha
+                            row.addEventListener("click", () => {
+                                displaySensorInfo(cityData.blocks[blockID].buildings[houseID].floors[floorNumber].divisions[z].sensors[k].topics[0].topic, 
+                                cityData.blocks[blockID].block, cityData.blocks[blockID].buildings[houseID].building_name,
+                                cityData.blocks[blockID].buildings[houseID].floors[floorNumber].divisions[z].sensors[k].sensor_id);
+                            });
+
+                            // Appends the cells to the row
+                            row.appendChild(cellTitle);
+                            row.appendChild(cellType);
+                            row.appendChild(cellData);
+                            row.appendChild(cellTimestamp);
+
+                            // Adds the row to the table
+                            table.appendChild(row);
+                        }
+                        // Appends the table to the sensorList container
+                        document.getElementById("sensorList").appendChild(table);
+                    }                        
+                }
+            }
+            
+                        
+            //console.log(document.getElementById("sensorList").innerHTML);
+            
+            sensorList = document.getElementById("sensorList");
+            console.log("🚀 ~ PrintSensors ~ sensorList:", sensorList)
+            
+            // Obtendo todos os elementos por ID
+            let elementsWithId = sensorList.querySelectorAll("p[id]");
+
+            updateSensorStatus();
+
+            if (intervalId) {
+                clearInterval(intervalId);
+                //console.log("Intervalo anterior limpo.");
+            }
+            // Iniciando o ciclo
+            intervalId = setInterval(updateSensorStatus, 5000);                
+        }  
+        
+        function updateSensorStatus() {
+            console.log("Executando a atualização do status dos sensores...");
+
+            // Seleciona todas as linhas da tabela, ignorando a linha do cabeçalho (índice 0)
+            const tableRows = document.querySelectorAll(".sensorTable tr:not(:first-child)");
+
+            tableRows.forEach((row) => {
+                // Obtém as células da linha atual
+                const cells = row.getElementsByTagName("td");
+
+                // Verifica se há pelo menos duas células (ID e Status)
+                if (cells.length >= 2) {
+                    const sensorID = cells[0].textContent; // ID do sensor está na primeira célula
+                    const statusCell = cells[2]; // Célula de status
+                    const statusTimestamp = cells[3];
+
+                    // Faz uma solicitação para obter o status do sensor
+                    fetch('/mvn_tomcat_webapp/app', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded', // Cabeçalho apropriado para formulário
+                        },
+                        body: `action=getSensorStatus&simID=${encodeURIComponent(simulationName)}&sensorID=${encodeURIComponent(sensorID)}` // Corpo da requisição
+                    })
+                        .then(response => response.json()) // Resolve o JSON da resposta
+                        .then(data => {
+                            console.log(`Status atualizado para o sensor ${sensorID}:`, data);
+                            
+                            let sensorData = data["status"];
+                            console.log("🚀 ~ tableRows.forEach ~ sensorData:", sensorData)
+                            
+                            if (sensorData) {
+                                // Corrige o uso da expressão regular
+                                const [valor, ...timeStamps] = sensorData.split(/\s+/);
+                                const timestamp = timeStamps.join(" ");
+                                
+                                // Atualiza a célula de status e de timestamp com o novo valor
+                                statusCell.textContent = valor;
+                                console.log("🚀 ~ tableRows.forEach ~ valor:", valor);
+                                statusTimestamp.textContent = timestamp;
+                                console.log("🚀 ~ tableRows.forEach ~ timestamp:", timestamp);
+                            } else {
+                                console.error(`Dados de status ausentes para o sensor ${sensorID}:`, data);
+                            }
+                        })
+                            
+                        .catch(error => {
+                            console.error(`Erro ao obter o status do sensor ${sensorID}:`, error);
+                        });
+                }
+            });
+        }
+
+        /* 
+        async function displaySensorInfo(sensorTopic, blockID, buildingID, sensorID) {
+            const sensorInfoElement = document.getElementById("selectedSensorInfo");
+            sensorInfoElement.innerHTML = `Block: <strong>${blockID}</strong> | Building: <strong>${buildingID}</strong> | Sensor ID: <strong>${sensorID}</strong>`;
+            
+            try {
+                let response = await fetch('/mvn_tomcat_webapp/app', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=getSensorHistory&simID=${encodeURIComponent(simulationName)}&blockID=${encodeURIComponent(blockID)}&buildingID=${encodeURIComponent(buildingID)}&sensorTopic=${encodeURIComponent(sensorTopic)}`
+                });
+
+                const data = await response.json();  // Assume que a resposta seja um JSON válido
+
+                if (data.sensorHistory && Array.isArray(data.sensorHistory)) {
+                    // Processa os dados recebidos
+                    const timestamps = [];
+                    const values = [];
+
+                    data.sensorHistory.forEach(entry => {
+                        const match = entry.match(/value\s=\s([\d.]+),\stimestamp\s=\s(\d+)/);
+                        if (match) {
+                            const value = parseFloat(match[1]);
+                            const timestamp = new Date(parseInt(match[2])).toLocaleTimeString(); // Formata o timestamp como hora
+                            values.push(value);
+                            timestamps.push(timestamp);
+                        }
+                    });
+
+                    // Atualiza o gráfico
+                    createSensorChart(chartContainer, timestamps, values);
+                } else {
+                    sensorInfoElement.innerHTML += "<br><strong>Nenhum histórico de sensor encontrado.</strong>";
+                }           
+        
+
+            } catch (error) {
+                console.error('Erro ao obter o historico do sensor:', error);
+            }
+        } */
+
+        async function displaySensorInfo(sensorTopic, blockID, buildingID, sensorID) {
+            const sensorInfoElement = document.getElementById("selectedSensorInfo");
+            //const chartContainer = document.getElementById("chartContainer");
+
+            // Atualiza o texto básico antes de exibir o gráfico
+            //sensorInfoElement.innerHTML = `Block: <strong>${blockID}</strong> | Building: <strong>${buildingID}</strong> | Sensor ID: <strong>${sensorID}</strong>`;
+
+            try {
+                let response = await fetch('/mvn_tomcat_webapp/app', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=getSensorHistory&simID=${encodeURIComponent(simulationName)}&blockID=${encodeURIComponent(blockID)}&buildingID=${encodeURIComponent(buildingID)}&sensorTopic=${encodeURIComponent(sensorTopic)}`
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    if (data.sensorHistory && Array.isArray(data.sensorHistory)) {
+                        // Processa os dados recebidos
+                        const timestamps = [];
+                        const values = [];
+
+                        data.sensorHistory.forEach(entry => {
+                            const match = entry.match(/value\s=\s([\d.]+),\stimestamp\s=\s(\d+)/);
+                            if (match) {
+                                const value = parseFloat(match[1]);
+                                const timestamp = new Date(parseInt(match[2])).toLocaleTimeString(); // Formata o timestamp como hora
+                                values.push(value);
+                                timestamps.push(timestamp);
+                            }
+                        });
+
+                        // Atualiza o gráfico
+                        createSensorChart(timestamps, values, blockID, buildingID, sensorID);
+                    } else {
+                        sensorInfoElement.innerHTML += "<br><strong>Nenhum histórico de sensor encontrado.</strong>";
+                    }
+                } else {
+                    console.error('Erro na resposta:', response.statusText);
+                    sensorInfoElement.innerHTML += "<br><strong>Erro ao obter os dados do histórico.</strong>";
+                }
+            } catch (error) {
+                console.error('Erro ao realizar a requisição:', error);
+                sensorInfoElement.innerHTML += "<br><strong>Erro ao realizar a requisição.</strong>";
+            }
+        }
+
+        /**
+         * Cria e exibe um gráfico usando Chart.js.
+         * @param {HTMLElement} container - O contêiner do gráfico.
+         * @param {Array} labels - Os labels do eixo X (timestamps).
+         * @param {Array} data - Os valores do eixo Y (valores do sensor).
+         */
+        function createSensorChart(labels, data, blockID, buildingID, sensorID) {
+            const canvas = document.getElementById('sensorChart');
+
+            // Torna o canvas visível caso esteja oculto
+            canvas.style.display = 'block';
+
+            const ctx = canvas.getContext('2d');
+
+            // Destroi o gráfico anterior, se existir
+            if (sensorChartInstance) {
+                sensorChartInstance.destroy();
+            }
+
+            sensorChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Sensor ID: ${sensorID} Status`,
+                        data: data,
+                        borderColor: 'rgba(75, 192, 192, 1)', // Cor da linha
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)', // Cor de preenchimento
+                        borderWidth: 2, // Largura da linha
+                        pointRadius: 3, // Tamanho dos pontos
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)' // Cor dos pontos
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true, // Exibir o título
+                            text: `Sensor Data from Block: ${blockID}, Building: ${buildingID}, Sensor ID: ${sensorID}`, // Texto do título
+                            font: {
+                                size: 14, // Tamanho da fonte do título
+                            },
+                            color: '#333', // Cor do título
+                            padding: {
+                                top: 10,
+                                bottom: 10 // Espaçamento entre o título e o gráfico
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 14, // Tamanho da fonte da legenda
+                                },
+                                color: '#333' // Cor da legenda
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)', // Cor do fundo do tooltip
+                            titleFont: {
+                                size: 16 // Tamanho da fonte do título no tooltip
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                /* callback: function (value) {
+                                    const label = this.getLabelForValue(value); // Obtém o rótulo do tick
+                                    const firstLabel = this.chart.data.labels[0]; // Primeiro rótulo
+                                    const lastLabel = this.chart.data.labels[this.chart.data.labels.length - 1]; // Último rótulo
+
+                                    // Exibe apenas o primeiro e o último rótulos
+                                    if (label === firstLabel || label === lastLabel) {
+                                        return label;
+                                    }
+                                    return ''; // Deixa os outros ticks vazios
+                                }, */
+                                font: {
+                                    size: 12, // Tamanho da fonte nos eixos
+                                }
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                font: {
+                                    size: 12,
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+            
+    </script>
+
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color:black;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 24px;
+            color: #343a40;
+        }
+
+        #simulationForm {
+            width: 90%;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        button {
+            display: inline-block;
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            color: #ffffff;
+            background-color: #2a9d8f;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #21867a;
+        }
+
+        button:active {
+            background-color: #2a9d8f;
+        }
+        
+        /* Estilo para o botão desativado */
+        #submitButton:disabled {
+            background-color: #b5c9c6; /* Cor cinza */
+            cursor: not-allowed;
+        }
+
+        /* Estilo para o feedback de validação */
+        #nameFeedback {
+            font-size: 12px; /* Menor que os subtítulos */
+            margin-left: 10px;
+        }
+
+        /* Mensagens de sucesso e erro com cores suaves */
+        .success-message {
+            color: #60b469; /* Tom suave de verde */
+            font-size: 12px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .error-message {
+            color: #b33a3a; /* Tom suave de vermelho */
+            font-size: 12px;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Load Simulation</h2>
+    <form id="simulationForm" enctype="multipart/form-data">
+        <!-- Input para o nome da simulação -->
+        <label for="simulationName">Simulation Name:</label>
+        <input type="text" id="simulationName" name="simulationName" required oninput="checkSimulationName()">
+        <span id="nameFeedback"></span> <!-- Feedback de validação -->
+
+        <!-- Input para o arquivo JSON -->
+        <label for="configFile">Upload Configuration File (JSON):</label>
+        <input type="file" id="configFile" name="configFile" accept=".json" required>
+
+        <button type="button"  id="submitButton" onclick="submitSimulation()" disabled>Load Simulation</button>
+    </form>
+
+    <div id="feedback"></div>
+
+    <script>
+        let debounceTimer;
+
+        // Verifica se a simulação já existe
+        async function checkSimulationName() {
+            const simulationName = document.getElementById("simulationName").value;
+            const nameFeedback = document.getElementById("nameFeedback");
+            const submitButton = document.getElementById("submitButton");
+
+            // Não faz requisição se o campo estiver vazio
+            if (!simulationName) {
+                nameFeedback.textContent = "";
+                return;
+            }
+
+             // Limita a quantidade de requisições enviadas (debounce)
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                try {
+                    let response = await fetch('/mvn_tomcat_webapp/app', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `action=checkSimulationName&name=${encodeURIComponent(simulationName)}`
+                    });
+
+                    const simulation = await response.json();
+                    console.log("🚀 ~ debounceTimer=setTimeout ~ exists:", simulation)
+
+                    // Atualiza o feedback para o usuário
+                    if (simulation.exists) {
+                        nameFeedback.textContent = "Simulation name already exists.";
+                        nameFeedback.style.color = "red";
+
+                        // Desabilita o botão de submit
+                        document.getElementById("submitButton").disabled = true; 
+
+                        // Sugestão de nome alternativo (com timestamp)
+                        const timestamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0]; // Formato: yyyyMMddHHmmss
+                        const alternativeName = simulationName + "_" + timestamp;
+                        nameFeedback.innerHTML += `<br>Name sugestion: <strong>${alternativeName}</strong>`;
+                    } else {
+                        nameFeedback.textContent = "Simulation name is available.";
+                        nameFeedback.style.color = "green";
+
+                        // Habilita o botão de submit
+                        submitButton.disabled = false;
+                        document.getElementById("submitButton").style.backgroundColor = "#2a9d8f";
+                    }
+
+                } catch (error) {
+                    console.error("Error checking simulation name:", error);
+                }
+            }, 500); // Aguarda 500ms após o último input
+        }
+
+        async function submitSimulation() {
+            const form = document.getElementById("simulationForm");
+            const formData = new FormData(form);
+
+            // Adiciona o campo de ação diretamente ao FormData
+            formData.append("action", "addNewSimulation");
+
+            const feedback = document.getElementById("feedback");
+            feedback.innerHTML = ""; // Limpa mensagens anteriores
+            
+            try {
+                const response = await fetch("/mvn_tomcat_webapp/app", {
+                    method: "POST",
+                    body: formData // O FormData já lida com o multipart/form-data
+                });
+
+                // Lidar com a resposta
+                if (response.ok) {
+                    const result = await response.json();
+                    feedback.innerHTML = `<div class="success-message">Simulation loaded successfully: ${result.message}</div>`;
+
+                    // Limpa o campo de nome da simulação após sucesso
+                    document.getElementById("simulationName").value = "";
+
+                    // Limpa o feedback de validação e reabilita o botão
+                    document.getElementById("nameFeedback").textContent = "";
+                    document.getElementById("submitButton").disabled = false;  // Reabilita o botão
+                    document.getElementById("submitButton").style.backgroundColor = "#2a9d8f";
+                } else {
+                    feedback.innerHTML = `<div class="error-message">Failed to load simulation. Status: ${response.status}</div>`;
+                }
+            } catch (error) {
+                feedback.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
+                console.error("Erro ao enviar o formulário:", error);
+            }
+        }
+    </script>
+</body>
+</html>
